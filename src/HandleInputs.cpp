@@ -1,8 +1,6 @@
 #include "Simulation.h"
 
-#include <memory>
-
-void Simulation::handleEvents()
+void Simulation::handleInputs()
 {
     while (const std::optional event = window.pollEvent())
     {
@@ -20,7 +18,7 @@ void Simulation::handleEvents()
         if (kp){
             if (kp->code == sf::Keyboard::Key::S)
             {
-                updateSim = true;
+                simState.updateSim = true;
             }
 
             if (kp->code == sf::Keyboard::Key::Escape)
@@ -31,26 +29,25 @@ void Simulation::handleEvents()
 
         if (auto* mm = event->getIf<sf::Event::MouseMoved>())
         {
-            if (placingVisualiser)
+            if (inputState.placingComponent)
             {
                 // Snap to the grid
-                float snappedPosX = static_cast<int>(mm->position.x / gridSize) * gridSize;
-                float snappedPosY = static_cast<int>(mm->position.y  / gridSize) * gridSize;
+                float snappedPosX = static_cast<int>(mm->position.x / renderState.gridSize) * renderState.gridSize;
+                float snappedPosY = static_cast<int>(mm->position.y  / renderState.gridSize) * renderState.gridSize;
 
-                placingVisualiser->setPosition(sf::Vector2f(snappedPosX, snappedPosY));
+                // NOTE - WHEN IT COMES TO MOVING EXISTING COMPONENTS AROUND THIS LAST ELEMENT IN VECTOR APPROACH WILL BREAK
+                circuitBuilder.subComponents.back()->position = sf::Vector2f(snappedPosX, snappedPosY);
             }
         }
 
         // Mouse click → place component
         if (auto* mp = event->getIf<sf::Event::MouseButtonPressed>())
         {
-            if (mp->button == sf::Mouse::Button::Left && placingVisualiser)
+            if (mp->button == sf::Mouse::Button::Left && inputState.placingComponent)
             {
-                components.push_back(placingVisualiser->component); // store the real component
-                componentVisualisers.push_back(placingVisualiser);  // store visualiser (derefrence for the vector)
-
-                placingVisualiser = nullptr;
+                inputState.placingComponent = false;
             }
         }
+
     }
 }

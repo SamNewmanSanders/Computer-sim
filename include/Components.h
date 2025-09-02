@@ -19,6 +19,8 @@ public:
     std::vector<std::shared_ptr<Pin>> currentOutputs;
     std::vector<bool> nextOutputs;
 
+    sf::Vector2f position;
+
     virtual void computeNextOutputs() = 0;
     void updateOutputs() 
     {
@@ -26,8 +28,6 @@ public:
             currentOutputs[i]->value = nextOutputs[i];
         }
     }
-
-    std::string type = "GENERIC";
 };
 
 class AndGate : public Component
@@ -56,8 +56,6 @@ public:
             nextOutputs[0] = false; // If either input is nullptr, output false
         }
     } 
-
-    std::string type = "AND";
 };
 
 class OrGate : public Component
@@ -85,8 +83,6 @@ public:
             nextOutputs[0] = false; 
         }
     }
-
-    std::string type = "OR";
 };
 
 class NotGate : public Component
@@ -115,8 +111,6 @@ public:
             nextOutputs[0] = false;
         }
     } 
-
-    std::string type = "NOT";
 };
 
 class InputGate : public Component
@@ -139,8 +133,6 @@ public:
     {
         // No logic for input gate
     }
-
-    std::string type = "INPUT";
 };
 
 class OutputGate : public Component
@@ -170,6 +162,4 @@ public:
             value = false;
         }
     }
-
-    std::string type = "OUTPUT";
 };

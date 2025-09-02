@@ -3,15 +3,14 @@
 #include <SFML/Graphics.hpp>  // SFML 3
 #include <SFML/Window.hpp> 
 #include <SFML/System.hpp> 
-
 #include <TGUI/TGUI.hpp>
 #include <TGUI/Backend/SFML-Graphics.hpp>
 
 #include <vector>
 
-#include "Components.h"
-#include "ComponentVisualiser.h"
-#include "Renderer.h"
+#include "Circuit.h"
+#include "CircuitRenderer.h"
+#include "CircuitBuilder.h"
 
 
 class Simulation
@@ -23,29 +22,38 @@ public:
 
 private:
 
-    void update();
-
-    // Rendering
-    void render();
-    float gridSize = 40.f;
-
-    // Helpers
-    void drawGrid();
+    // Helper files
+    void handleInputs();
     void setupButtons();
-    void findPinAt(sf::Vector2f mousePos);
-    
 
     sf::RenderWindow window;
     tgui::Gui gui;
-    Renderer renderer;
+
+    CircuitBuilder circuitBuilder;
+    CircuitRenderer circuitRenderer;
+
+    std::shared_ptr<Circuit> mainCircuit = nullptr; // Null until it is finalized
 
 
-    std::vector<std::shared_ptr<Component>> components;    // Must use pointers because of polymorphism
-    std::vector<std::shared_ptr<ComponentVisualiser>> componentVisualisers;
+    struct SimState
+    {
+        bool updateSim = false;
+    };
 
-    // Event handling 
-    void handleEvents();
-    bool updateSim = false;
+    SimState simState;
 
-    std::shared_ptr<ComponentVisualiser> placingVisualiser = nullptr; // Nullptr initially as no component is being placed
+    struct InputState
+    {
+        bool placingComponent = false;
+    };
+
+    InputState inputState;
+
+    struct RenderState
+    {
+        float gridSize;
+    };
+
+    RenderState renderState;
+
 };
