@@ -6,9 +6,13 @@
 
 class Pin {
 public:
+
     bool value = false;
     std::shared_ptr<Pin> connectedFrom = nullptr; // The what inputs to this pin (can only be a single output)
     std::vector<std::shared_ptr<Pin>> connectedTo; // The pins this output connects to (can be multiple)
+
+    sf::Vector2f position; // Location on screen (makes rendering easier if each pin knows its location)
+    bool highlighted = false;  // If the pin is currently below mouse (turn yellow)
 };
 
 
@@ -36,8 +40,8 @@ public:
     
     AndGate()
     {
-        inputs.resize(2); // Two input pins
-        currentOutputs.resize(1); // One output pin
+        inputs = { std::make_shared<Pin>(), std::make_shared<Pin>() };
+        currentOutputs = { std::make_shared<Pin>() };
         nextOutputs.resize(1);
     }
 
@@ -64,8 +68,8 @@ public:
     
     OrGate()
     {
-        inputs.resize(2); 
-        currentOutputs.resize(1);
+        inputs = { std::make_shared<Pin>(), std::make_shared<Pin>() };
+        currentOutputs = { std::make_shared<Pin>() };
         nextOutputs.resize(1);
     }
 
@@ -91,8 +95,8 @@ public:
     
     NotGate()
     {
-        inputs.resize(1); 
-        currentOutputs.resize(1);
+        inputs = { std::make_shared<Pin>() };
+        currentOutputs = { std::make_shared<Pin>() };
         nextOutputs.resize(1);
     }
 
@@ -120,7 +124,7 @@ public:
     InputGate()
     {
         inputs.resize(0);
-        currentOutputs.resize(1);
+        currentOutputs = { std::make_shared<Pin>() };
         nextOutputs.resize(1);
     }
 
@@ -143,7 +147,7 @@ public:
 
     OutputGate()
     {
-        inputs.resize(1);
+        inputs = { std::make_shared<Pin>() };
         currentOutputs.resize(0);
         nextOutputs.resize(0);
     }

@@ -22,18 +22,15 @@ void Simulation::setupButtons()
         if (buttonNames[i] == "And") // Would automate this but there are only five gates
         {
             button->onPress([this]() {
-                auto component = std::make_shared<AndGate>();
-                circuitBuilder.subComponents.push_back(component);
-                inputState.placingComponent = true;
+                inputState.ghostComponent = std::make_shared<AndGate>();
+                inputState.ghostComponent->position = sf::Vector2f(100.f, 100.f);
             });
         }
 
-        if (buttonNames[i] == "Input") // 
+        if (buttonNames[i] == "Input") 
         {
             button->onPress([this]() {
-                auto component = std::make_shared<InputGate>();
-                circuitBuilder.subComponents.push_back(component);
-                inputState.placingComponent = true;
+                inputState.ghostComponent = std::make_shared<InputGate>();
             });
         }
 
@@ -41,9 +38,7 @@ void Simulation::setupButtons()
         if (buttonNames[i] == "Output") 
         {
             button->onPress([this]() {
-                auto component = std::make_shared<OutputGate>();
-                circuitBuilder.subComponents.push_back(component);
-                inputState.placingComponent = true;
+                inputState.ghostComponent = std::make_shared<OutputGate>();
             });
         }
 
@@ -51,7 +46,7 @@ void Simulation::setupButtons()
         if (buttonNames[i] == "Finish Circuit") // Would automate this but there are only five gates
         {
             button->onPress([this]() {
-                mainCircuit = circuitBuilder.finalizeComponent();
+                // TODO - ADD FINISH CIRCUIT LOGIC
             });
         }
 
