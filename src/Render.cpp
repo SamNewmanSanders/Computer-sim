@@ -7,16 +7,16 @@ void Simulation::render()
 {
     drawGrid();
 
+    if (inputState.drawingWire) drawWire(inputState.drawingWire);
+
+    for (auto& w : renderState.wires) drawWire(w);
+
     for (auto& c : circuitBuilder.subComponents)
     {
       drawComponent(c);
     }
     
     if (inputState.ghostComponent) drawComponent(inputState.ghostComponent, true);
-
-    if (inputState.drawingWire) drawWire(inputState.drawingWire);
-
-    for (auto& w : renderState.wires) drawWire(w);
 }
 
 void Simulation::drawGrid()
@@ -56,10 +56,10 @@ void Simulation::drawComponent(const std::shared_ptr<Component>& c, bool isGhost
     int numOutputs = c->currentOutputs.size();
     int maxPins = std::max(numInputs, numOutputs);
 
-    float padding = renderState.gridSize * 0.3;
+    float padding = renderState.gridSize * renderState.padding;
     float height = (maxPins - 1) * renderState.gridSize + padding * 2;
     float width  = 2.f * renderState.gridSize;
-    c->size = sf::Vector2f(width, height);  // Inefficient doing this every frame but won't really make much difference to speed
+    c->size = sf::Vector2f(width, height);
 
     sf::RectangleShape compShape;
     compShape.setSize(sf::Vector2f(width, height));

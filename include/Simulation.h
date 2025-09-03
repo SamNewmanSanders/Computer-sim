@@ -53,13 +53,14 @@ private:
         std::shared_ptr<Wire> drawingWire; // Similarly use this as a bool
         std::shared_ptr<Pin> highlightedInputPin = nullptr;
         std::shared_ptr<Pin> highlightedOutputPin = nullptr;
-        std::shared_ptr<Component> selectedInputComponent = nullptr;    // This is to help with changing the state of input pins
+        std::shared_ptr<InputGate> selectedInputGate = nullptr;    // This is to help with changing the state of input pins
     };
     InputState inputState;
 
     struct RenderState
     {
         float gridSize;
+        float padding = 0.3f;    // This means that each component will extend 0.3*gridsize beyond its top/bottom pins
         float bottomOffset;
         std::vector<std::shared_ptr<Wire>> wires;    // Placed them here as they are just for drawing
     };

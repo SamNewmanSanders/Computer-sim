@@ -3,6 +3,7 @@
 #include <SFML/Graphics.hpp>
 #include <memory>
 #include <vector>
+#include <iostream>
 
 class Pin {
 public:
@@ -29,9 +30,14 @@ public:
     virtual void computeNextOutputs() = 0;
     void updateOutputs() 
     {
-        for (size_t i = 0; i < currentOutputs.size(); ++i) {
+        for (size_t i = 0; i < currentOutputs.size(); ++i) 
+        {
             currentOutputs[i]->value = nextOutputs[i];
-        }
+            for (auto& targetPin : currentOutputs[i]->connectedTo) 
+            {
+                targetPin->value = nextOutputs[i];  // propagate downstream
+            }
+        }   
     }
 };
 
@@ -54,7 +60,7 @@ public:
 
     void computeNextOutputs() override
     {
-        if (inputs[0] && inputs[1]) {
+        if (inputs[0]->connectedFrom && inputs[1]->connectedFrom) {
             nextOutputs[0] = inputs[0]->value && inputs[1]->value;
         }
         else {
@@ -81,7 +87,7 @@ public:
 
     void computeNextOutputs() override
     {
-        if (inputs[0] && inputs[1]) {
+        if (inputs[0]->connectedFrom && inputs[1]->connectedFrom) {
             nextOutputs[0] = inputs[0]->value || inputs[1]->value;
         }
         else {
@@ -109,7 +115,7 @@ public:
 
     void computeNextOutputs() override
     {
-        if (inputs[0]) {
+        if (inputs[0]->connectedFrom) {
             nextOutputs[0] = !inputs[0]->value;
         }
         else {
@@ -129,9 +135,11 @@ public:
         nextOutputs.resize(1);
     }
 
-    void setInput(bool value)
+    void toggleInput()
     {
-        nextOutputs[0] = value;
+        currentOutputs[0]->value = !currentOutputs[0]->value;
+        nextOutputs[0] = !nextOutputs[0];
+
     }
 
     void computeNextOutputs() override
@@ -160,7 +168,7 @@ public:
 
     void computeNextOutputs() override
     {
-        if (inputs[0]) {
+        if (inputs[0]->connectedFrom) {
             value = inputs[0]->value;
         }
         else {

@@ -22,9 +22,8 @@ void Simulation::run()
 
         if (simState.updateSim)
         {
-            // REPLACE THIS WITH CIRCUT BUILDER LOGIC I AM YET TO IMPLEMENT
-            // mainCircuit->computeNextOutputs();
-            // mainCircuit->updateOutputs();
+            circuitBuilder.computeNextOutputs();
+            circuitBuilder.updateOutputs();
             simState.updateSim = false;
         }
 

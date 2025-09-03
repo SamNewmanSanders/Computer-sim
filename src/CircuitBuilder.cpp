@@ -22,3 +22,19 @@ std::shared_ptr<Circuit> CircuitBuilder::finalizeComponent()
 
     return circuit;
 }
+
+void CircuitBuilder::computeNextOutputs()
+{
+    for (auto& c : subComponents)
+    {
+        c->computeNextOutputs();
+    }
+}
+
+void CircuitBuilder::updateOutputs() 
+{
+    for (auto& c : subComponents)
+    {
+        c->updateOutputs();
+    }
+}

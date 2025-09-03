@@ -23,7 +23,20 @@ void Simulation::setupButtons()
         {
             button->onPress([this]() {
                 inputState.ghostComponent = std::make_shared<AndGate>();
-                inputState.ghostComponent->position = sf::Vector2f(100.f, 100.f);
+            });
+        }
+
+        if (buttonNames[i] == "Or") 
+        {
+            button->onPress([this]() {
+                inputState.ghostComponent = std::make_shared<OrGate>();
+            });
+        }
+
+        if (buttonNames[i] == "Not")
+        { 
+            button->onPress([this]() {
+                inputState.ghostComponent = std::make_shared<NotGate>();
             });
         }
 
@@ -33,7 +46,6 @@ void Simulation::setupButtons()
                 inputState.ghostComponent = std::make_shared<InputGate>();
             });
         }
-
 
         if (buttonNames[i] == "Output") 
         {

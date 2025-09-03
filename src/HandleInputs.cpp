@@ -44,11 +44,19 @@ void Simulation::handleInputs()
 
             inputState.highlightedInputPin = nullptr;   // Reset these before checking again
             inputState.highlightedOutputPin = nullptr; 
-            inputState.selectedInputComponent = nullptr;
+            inputState.selectedInputGate = nullptr;
 
             for (auto& c : circuitBuilder.subComponents)
             {
-                if (isMouseOverBox(mousePos, c->position, c->size))
+                // For changing input gate state
+                sf::Vector2f topLeftPoint = c->position + sf::Vector2f(0, -renderState.padding*renderState.gridSize); // Quirk of how I'm drawing
+                if (isMouseOverBox(mousePos, topLeftPoint , c->size))
+                {
+                    if (auto inputGate = std::dynamic_pointer_cast<InputGate>(c))
+                    {
+                        inputState.selectedInputGate = inputGate;
+                    }
+                }
 
                 for (auto& p : c->currentOutputs)   // Only loop over outputs (no connecting in reverse for now)
                 {
@@ -103,6 +111,11 @@ void Simulation::handleInputs()
                 inputState.drawingWire->linkPins();    // Links the pins so the logic should work
                 renderState.wires.push_back(inputState.drawingWire);
                 inputState.drawingWire = nullptr;
+            }
+            // Toggle an outputGates state
+            else if(mp->button == sf::Mouse::Button::Left && inputState.selectedInputGate)
+            {
+                inputState.selectedInputGate->toggleInput();
             }
         }
     }
