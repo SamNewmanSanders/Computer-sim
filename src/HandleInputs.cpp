@@ -1,5 +1,7 @@
 #include "Simulation.h"
 
+#include<iostream>
+
 void Simulation::handleInputs()
 {
     while (const std::optional event = window.pollEvent())
@@ -36,26 +38,38 @@ void Simulation::handleInputs()
                 float snappedPosY = static_cast<int>(mm->position.y  / renderState.gridSize) * renderState.gridSize;
 
                 inputState.ghostComponent->position = sf::Vector2f(snappedPosX, snappedPosY);
-                return; // THIS MIGHT CAUSE ISSUES WHERE EVENTS ARE MISSED IN THE FUTURE I'M NOT SURE
             }
 
             sf::Vector2f mousePos = static_cast<sf::Vector2f>(mm->position);
 
+            inputState.highlightedInputPin = nullptr;   // Reset these before checking again
+            inputState.highlightedOutputPin = nullptr; 
+            inputState.selectedInputComponent = nullptr;
+
             for (auto& c : circuitBuilder.subComponents)
             {
+                if (isMouseOverBox(mousePos, c->position, c->size))
+
                 for (auto& p : c->currentOutputs)   // Only loop over outputs (no connecting in reverse for now)
                 {
-                    if(isMouseOver(mousePos, p->position, 10.0f))
+                    if(isMouseOverPoint(mousePos, p->position, 10.0f))
                     {
                         p->highlighted = true;
-                        inputState.highlightedPin = p; // Say it is "selected" as a flag for if it is clicked
-                        return;
+                        inputState.highlightedOutputPin = p; // Say it is "selected" as a flag for if it is clicked
                     }
-                    p->highlighted = false; // Set this so pins don't stay selected
-                    inputState.highlightedPin = nullptr;
+                    else p->highlighted = false; // Set this so pins don't stay selected
                 }
-            }    
 
+                for (auto& p : c->inputs)   
+                {
+                    if(isMouseOverPoint(mousePos, p->position, 10.0f))
+                    {
+                        p->highlighted = true;
+                        inputState.highlightedInputPin = p; 
+                    }
+                    else p->highlighted = false; 
+                }
+            }
             if (inputState.drawingWire)
             {
                 inputState.drawingWire->tempEndPosition = mousePos;
@@ -71,16 +85,21 @@ void Simulation::handleInputs()
                 inputState.ghostComponent = nullptr;    // THIS IS VITAL - otherwise program will think there is always a ghost
             }
 
-            if(mp->button == sf::Mouse::Button::Left && !inputState.ghostComponent && inputState.highlightedPin)
+            // Select the first input pin to start drawing wire
+            else if(mp->button == sf::Mouse::Button::Left && !inputState.ghostComponent && inputState.highlightedOutputPin && !inputState.drawingWire)
             {
-                inputState.selectedPin = inputState.highlightedPin;
                 inputState.drawingWire = std::make_shared<Wire>();
-                inputState.drawingWire->setStartPin(inputState.selectedPin);
+                inputState.drawingWire->setStartPin(inputState.highlightedOutputPin);
+
+                // initialize temp positions so the wire doesn't jump to 0,0
+                inputState.drawingWire->tempStartPosition = inputState.highlightedOutputPin->position;
+                inputState.drawingWire->tempEndPosition   = inputState.highlightedOutputPin->position;
             }
 
-            if(mp->button == sf::Mouse::Button::Left && inputState.drawingWire && inputState.highlightedPin) // Finish drawing the wire
-            {
-                inputState.drawingWire->setEndPin(inputState.highlightedPin);
+             //Finish drawing the wire
+            else if(mp->button == sf::Mouse::Button::Left && inputState.drawingWire && inputState.highlightedInputPin)
+            {                   
+                inputState.drawingWire->setEndPin(inputState.highlightedInputPin);
                 inputState.drawingWire->linkPins();    // Links the pins so the logic should work
                 renderState.wires.push_back(inputState.drawingWire);
                 inputState.drawingWire = nullptr;
@@ -89,7 +108,17 @@ void Simulation::handleInputs()
     }
 }
 
-bool Simulation::isMouseOver(const sf::Vector2f& mousePos, const sf::Vector2f& thingPos, float halfSize) {
+bool Simulation::isMouseOverPoint(const sf::Vector2f& mousePos, const sf::Vector2f& thingPos, float halfSize) {
     return mousePos.x >= thingPos.x - halfSize && mousePos.x <= thingPos.x + halfSize &&
            mousePos.y >= thingPos.y - halfSize && mousePos.y <= thingPos.y + halfSize;
+}
+
+bool Simulation::isMouseOverBox(const sf::Vector2f& mousePos,
+                                const sf::Vector2f& pos,
+                                const sf::Vector2f& size)
+{
+    return mousePos.x >= pos.x &&
+           mousePos.x <= pos.x + size.x &&
+           mousePos.y >= pos.y &&
+           mousePos.y <= pos.y + size.y;
 }

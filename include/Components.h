@@ -23,7 +23,8 @@ public:
     std::vector<std::shared_ptr<Pin>> currentOutputs;
     std::vector<bool> nextOutputs;
 
-    sf::Vector2f position;
+    sf::Vector2f position;  // Keep links to rendering minimal, just neccesary info
+    sf::Vector2f size;       
 
     virtual void computeNextOutputs() = 0;
     void updateOutputs() 

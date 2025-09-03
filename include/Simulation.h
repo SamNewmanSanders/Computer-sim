@@ -26,7 +26,8 @@ private:
     // Input helpers
     void handleInputs();
     void setupButtons();
-    bool isMouseOver(const sf::Vector2f& mousePos, const sf::Vector2f& thingPos, float halfSize);
+    bool isMouseOverPoint(const sf::Vector2f& mousePos, const sf::Vector2f& thingPos, float halfSize);
+    bool isMouseOverBox(const sf::Vector2f& mousePos, const sf::Vector2f& pos, const sf::Vector2f& size);
 
     // Render helpers
     void drawGrid();
@@ -50,8 +51,9 @@ private:
     {
         std::shared_ptr<Component> ghostComponent = nullptr;  // This is the component that is being currently placed. Also acts like a bool
         std::shared_ptr<Wire> drawingWire; // Similarly use this as a bool
-        std::shared_ptr<Pin> highlightedPin = nullptr;
-        std::shared_ptr<Pin> selectedPin = nullptr;
+        std::shared_ptr<Pin> highlightedInputPin = nullptr;
+        std::shared_ptr<Pin> highlightedOutputPin = nullptr;
+        std::shared_ptr<Component> selectedInputComponent = nullptr;    // This is to help with changing the state of input pins
     };
     InputState inputState;
 

@@ -1,6 +1,7 @@
 #include "Simulation.h"
 
 #include <cmath>
+#include <iostream>
 
 void Simulation::render()
 {
@@ -58,6 +59,7 @@ void Simulation::drawComponent(const std::shared_ptr<Component>& c, bool isGhost
     float padding = renderState.gridSize * 0.3;
     float height = (maxPins - 1) * renderState.gridSize + padding * 2;
     float width  = 2.f * renderState.gridSize;
+    c->size = sf::Vector2f(width, height);  // Inefficient doing this every frame but won't really make much difference to speed
 
     sf::RectangleShape compShape;
     compShape.setSize(sf::Vector2f(width, height));
@@ -130,8 +132,7 @@ void Simulation::drawComponent(const std::shared_ptr<Component>& c, bool isGhost
 void Simulation::drawWire(std::shared_ptr<Wire>& wire, float thickness)
 {
     sf::Vector2f start = wire->startPin->position;
-    //sf::Vector2f end = wire->endPin? wire->endPin->position : wire->tempEndPosition;
-    sf::Vector2f end = wire->tempEndPosition;
+    sf::Vector2f end = wire->endPin? wire->endPin->position : wire->tempEndPosition;
 
     // Compute the vector from start to end
     sf::Vector2f delta = end - start;
