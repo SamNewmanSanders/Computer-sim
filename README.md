@@ -1,1 +1,1 @@
-![Screenshot of CPU Simulation](assets/Basic NOR latch.png)
+![Screenshot of CPU Simulation](assets/NOR_latch.png)
