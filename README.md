@@ -3,8 +3,4 @@ this video: https://www.youtube.com/watch?v=QZwneRb-zqA  Although I implemented 
 
 Implemented with SFML and TGUI
 
-<p align="center">
-  <img src="assets/screenshot.png" alt="NOR latch working" width="500"/>
-  <br/>
-  <em>Figure 1: Basic version working - NOR latch.</em>
-</p>
+![Screenshot of CPU Simulation](assets/NOR_latch.png)
